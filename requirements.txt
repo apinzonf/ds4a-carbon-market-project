@@ -1,0 +1,14 @@
+# Project dependencies
+dash
+plotly
+pandas
+dash_bootstrap_components
+Flask==2.1.2
+# Test dependencies
+pytest==7.1.2
+# Build dependencies
+doit==0.34.2
+doit-py>=0.4.0
+mock
+# Coverage
+coverage==6.4.1
