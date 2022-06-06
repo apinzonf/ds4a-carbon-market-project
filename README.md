@@ -4,6 +4,7 @@ Data Science For All
 Carbon-Market analysis project
 
 ## Runtime settings
+
 Property | Value
 -------- | -----
 Runtime | Python 3.7
@@ -55,4 +56,11 @@ doit
 ## List tasks
 ```bash
 doit list
+```
+
+## Run the dash app
+```bash
+cd ds4a-carbon-market-project/
+cd app/
+python app.py
 ```
