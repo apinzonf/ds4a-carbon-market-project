@@ -42,6 +42,7 @@ cols_names = ['credits_issued', 'credits_retired', 'registry_issued_credits', 'c
 cols_names.sort()
 col_items = {i[0]: i[1] for i in list(zip(range(len(cols_names)), cols_names))}
 
+
 def update_scatter_plot(y_value):
     return px.scatter(
         df,
@@ -49,6 +50,7 @@ def update_scatter_plot(y_value):
         y=y_value,
         color="region"
     )
+
 
 @app.callback(Output('scatter-graph', 'figure'), [Input('fig-drop-down', 'value')])
 def slider_interaction(slider_val):
@@ -79,17 +81,20 @@ app.layout = html.Div(
         ], style={
             'backgroundColor': '#EEEEEE',
             'flex': '1'}),
-
         html.Main(
-            children=[
-                html.Nav(children=[
-                    dcc.Dropdown(options=box_x_cols,value='region',id='id-box-drop-down-x'),
-                    dcc.Dropdown(options=box_y_cols,value='co2_emitted',id='id-box-drop-down-y'),
-                    dcc.Checklist(options=["SemiLogY"], value=["SemiLogY"], id='id-box-drop-down-semilogy')
-
-                ], style={ 'min-width': '200px'}),
-                html.Article(dcc.Graph( id='box-graph', figure=slider_interaction()),
+            dcc.Tabs([
+                dcc.Tab(label='Boxplot Analysis', children=[
+                    html.Nav(children=[
+                        dcc.Dropdown(options=box_x_cols,value='region',id='id-box-drop-down-x'),
+                        dcc.Dropdown(options=box_y_cols,value='co2_emitted',id='id-box-drop-down-y'),
+                        dcc.Checklist(options=["SemiLogY"], value=["SemiLogY"], id='id-box-drop-down-semilogy')
+                    ], style={ 'min-width': '200px'}),
+                    html.Article(dcc.Graph( id='box-graph', figure=slider_interaction()),
                              style={'height': '100%', 'flex': '70%'})
+                ]),
+                dcc.Tab(label='Other 1'),
+                dcc.Tab(label='Other 2'),
+                dcc.Tab(label='Other 3')
             ],
             style={
                 'display': 'flex',
@@ -97,7 +102,7 @@ app.layout = html.Div(
                 'flex': '70%',
                 'margin': '10px',
                 'backgroundColor': '#FFFF10'
-            }),
+            })),
         html.Footer("DS4A0100",style={'backgroundColor': '#AAAAFF','flex': '1'})
     ],
     style={
@@ -106,7 +111,6 @@ app.layout = html.Div(
         'height': '100vh',
         'min-height': '100vh'
     })
-
 
 
 if __name__ == '__main__':
