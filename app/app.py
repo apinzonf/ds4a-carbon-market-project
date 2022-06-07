@@ -1,14 +1,16 @@
-from dash import Dash, html, dcc,Input, Output
+from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
 import pandas as pd
 
-app = Dash(__name__, meta_tags=[{'name':'viewport', 'content':'width=device-width, height=device-height, initial-scale=1.0'}])
+app = Dash(__name__,
+           meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}])
 app.title = 'Carbon-Market analysis'
 
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
 df = pd.read_csv("../data/carbon-market_and_co2-emissions.csv.zip")
 df = df.drop(['Unnamed: 0'], axis=1)
+
 
 def generate_table(dataframe, max_rows=10):
     return html.Table([
@@ -31,7 +33,6 @@ fig = px.scatter(
     hover_data=["co2_emitted", "credits_issued", "region"],
 )
 
-
 box_x_cols = ['voluntary_registry', 'arb_project', 'voluntary_status', 'scope', 'type', 'reduction_removal',
               'methodology_protocol', 'region', 'country', 'state', 'project_type', 'year']
 box_x_cols.sort()
@@ -42,6 +43,7 @@ cols_names = ['credits_issued', 'credits_retired', 'registry_issued_credits', 'c
 cols_names.sort()
 col_items = {i[0]: i[1] for i in list(zip(range(len(cols_names)), cols_names))}
 
+
 def update_scatter_plot(y_value):
     return px.scatter(
         df,
@@ -49,6 +51,7 @@ def update_scatter_plot(y_value):
         y=y_value,
         color="region"
     )
+
 
 @app.callback(Output('scatter-graph', 'figure'), [Input('fig-drop-down', 'value')])
 def slider_interaction(slider_val):
@@ -72,34 +75,40 @@ def slider_interaction(x_value='region', y_value='co2_emitted', semilogy=["SemiL
 
 
 app.layout = html.Div(
-    children=[
-        html.Header(children=[
-            html.H1(children='Carbon-Market analysis'),
-            html.Div(children='''Team 74''')
-        ], style={
-            'backgroundColor': '#EEEEEE',
-            'flex': '1'}),
+    dcc.Tabs([
+        dcc.Tab(label='Boxplot Analysis', children=[
+            html.Header(children=[
+                html.H1(children='Carbon-Market analysis'),
+                html.Div(children='''Team 74''')
+            ], style={
+                'backgroundColor': '#EEEEEE',
+                'flex': '1'}),
 
-        html.Main(
-            children=[
-                html.Nav(children=[
-                    dcc.Dropdown(options=box_x_cols,value='region',id='id-box-drop-down-x'),
-                    dcc.Dropdown(options=box_y_cols,value='co2_emitted',id='id-box-drop-down-y'),
-                    dcc.Checklist(options=["SemiLogY"], value=["SemiLogY"], id='id-box-drop-down-semilogy')
+            html.Main(
+                children=[
+                    html.Nav(children=[
+                        dcc.Dropdown(options=box_x_cols, value='region', id='id-box-drop-down-x'),
+                        dcc.Dropdown(options=box_y_cols, value='co2_emitted', id='id-box-drop-down-y'),
+                        dcc.Checklist(options=["SemiLogY"], value=["SemiLogY"], id='id-box-drop-down-semilogy')
 
-                ], style={ 'min-width': '200px'}),
-                html.Article(dcc.Graph( id='box-graph', figure=slider_interaction()),
-                             style={'height': '100%', 'flex': '70%'})
-            ],
-            style={
-                'display': 'flex',
-                'flex-direction': 'row',
-                'flex': '70%',
-                'margin': '10px',
-                'backgroundColor': '#FFFF10'
-            }),
-        html.Footer("DS4A0100",style={'backgroundColor': '#AAAAFF','flex': '1'})
-    ],
+                    ], style={'min-width': '200px'}),
+                    html.Article(dcc.Graph(id='box-graph', figure=slider_interaction()),
+                                 style={'height': '100%', 'flex': '70%'})
+                ],
+                style={
+                    'display': 'flex',
+                    'flex-direction': 'row',
+                    'flex': '70%',
+                    'margin': '10px',
+                    'backgroundColor': '#FFFF10'
+                }),
+            html.Footer("DS4A0100", style={'backgroundColor': '#AAAAFF', 'flex': '1'})
+        ]
+                ),
+        dcc.Tab(label='Other 1'),
+        dcc.Tab(label='Other 2'),
+        dcc.Tab(label='Other 3')
+    ]),
     style={
         'display': 'flex',
         'flex-direction': 'column',
@@ -107,8 +116,5 @@ app.layout = html.Div(
         'min-height': '100vh'
     })
 
-
-
 if __name__ == '__main__':
     app.run_server(debug=True)
-
