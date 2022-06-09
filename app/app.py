@@ -10,11 +10,23 @@ app.title = 'Carbon-Market analysis'
 
 # Load data frame
 df = pd.read_csv("../data/carbon-market.csv.zip")
-
+df2 = pd.read_csv("../data/merged_project_worldbank.csv.zip")
+country_list = df2.country.unique()
 
 # Load box_plot tab class manager
 box_plot_analysis = BoxPlotAnalysis(df)
 
+
+@app.callback(Output('line-plot', 'figure'),
+              Input('checklist', 'value',))
+def update_line_chart(countries=country_list):
+    mask = df2.country.isin(countries)
+    fig_line = px.line(df2[mask],
+                       x='year',
+                       y='CO2_emitted',
+                       color='country',
+                       title='CO2 emitted by country')
+    return fig_line
 
 @app.callback(box_plot_analysis.get_output(),box_plot_analysis.get_inputs())
 def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issued', semilogy=["SemiLogY"]):
@@ -32,7 +44,15 @@ app.layout = html.Div(
         html.Main(
             dcc.Tabs([
                 dcc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
-                dcc.Tab(label='Other 1'),
+                dcc.Tab(label='CO2_emitted', children=[
+                    dcc.Graph(id='line-plot', figure=update_line_chart()),
+                    dcc.Checklist(
+                        id='checklist',
+                        options=country_list,
+                        value=['United States'],
+                        inline=True
+                    )
+                ]),
                 dcc.Tab(label='Other 2'),
                 dcc.Tab(label='Other 3')
             ],
