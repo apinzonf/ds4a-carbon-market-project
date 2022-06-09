@@ -1,5 +1,6 @@
 import plotly.express as px
 from dash import Output, Input, html, dcc
+import dash_bootstrap_components as dbc
 
 
 class BoxPlotAnalysis(object):
@@ -7,7 +8,11 @@ class BoxPlotAnalysis(object):
         self.df = df
 
     def boxplot_fig(self, x_value='region', y_value='credits_issued', semilogy=["SemiLogY"]):
-        fig_box = px.box(self.df, x=x_value, y=y_value, height=600)
+        fig_box = px.box(self.df,
+                         x=x_value,
+                         y=y_value,
+                         title=f"Boxplot of {y_value} by {x_value}",
+                         height=540)
         if semilogy:
             fig_box.update_yaxes(type="log")
         return fig_box
@@ -25,7 +30,7 @@ class BoxPlotAnalysis(object):
     @staticmethod
     def get_box_x_cols():
         box_x_cols = ['voluntary_registry', 'arb_project', 'voluntary_status', 'scope', 'type', 'reduction_removal',
-                          'methodology_protocol', 'region', 'country', 'state', 'project_type', 'year']
+                      'methodology_protocol', 'region', 'country', 'state', 'project_type', 'year']
         box_x_cols.sort()
         return box_x_cols
 
@@ -36,21 +41,45 @@ class BoxPlotAnalysis(object):
         return box_y_cols
 
     def get_html_components(self):
-        return [
-            html.Nav(children=[
-                dcc.Dropdown(
-                    options=BoxPlotAnalysis.get_box_x_cols(),
-                    value=BoxPlotAnalysis.get_box_x_cols()[0],
-                    id='id-box-drop-down-x'),
-                dcc.Dropdown(
-                    options=BoxPlotAnalysis.get_box_y_cols(),
-                    value=BoxPlotAnalysis.get_box_y_cols()[0],
-                    id='id-box-drop-down-y'),
-                dcc.Checklist(
-                    options=["SemiLogY"],
-                    value=["SemiLogY"],
-                    id='id-box-drop-down-semilogy')
-            ], style={ 'min-width': '200px'}),
-            html.Article(dcc.Graph( id='box-graph', figure=self.boxplot_fig()),
-                         style={'height': '100%', 'flex': '70%'})
-        ]
+        return html.Div(
+            children=[
+                dbc.Nav(children=[
+                    html.Div(children=[
+                        dbc.FormText("Select category for x axis"),
+                        dcc.Dropdown(
+                            options=BoxPlotAnalysis.get_box_x_cols(),
+                            value=BoxPlotAnalysis.get_box_x_cols()[0],
+                            id='id-box-drop-down-x')],
+                        className="mb-4"
+                    ),
+                    html.Div(children=[
+                        dbc.FormText("Select numerical data for y axis"),
+                        dcc.Dropdown(
+                            options=BoxPlotAnalysis.get_box_y_cols(),
+                            value=BoxPlotAnalysis.get_box_y_cols()[0],
+                            id='id-box-drop-down-y')],
+                        className="mb-4"
+                    ),
+                    html.Div(children=[
+                        dbc.FormText("Plot log scaling on the y axis"),
+                        dcc.Checklist(
+                            options=["SemiLogY"],
+                            value=["SemiLogY"],
+                            id='id-box-drop-down-semilogy')],
+                        className="mb-4")
+                ], style={
+                    'min-width': '250px',
+                    'padding': '1rem 2rem 1rem 1rem'
+                },
+                    vertical="md"),
+                html.Article(dcc.Graph(id='box-graph', figure=self.boxplot_fig()),
+                             style={'height': '100%', 'flex': '70%'}
+                             )
+            ],
+            style={
+                'display': 'flex',
+                'flex-direction': 'row',
+                'flex': '70%',
+                'margin': '10px'
+            })
+        return
