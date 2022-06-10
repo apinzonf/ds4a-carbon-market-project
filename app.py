@@ -4,9 +4,12 @@ import plotly.express as px
 import pandas as pd
 
 from app.about_us_page import AboutUsPage
+from app.data_table_page import DataTablePage
 from app.description_page import DescriptionPage
 from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.boxplot_analysis import BoxPlotAnalysis
+from app.pairplot_analysis import PairPlotAnalysis
+from app.report_page import ReportPage
 
 app = Dash(__name__,
            meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}],
@@ -17,9 +20,12 @@ app.title = 'Carbon-Market analysis'
 df = pd.read_csv("data/carbon-market.csv.zip")
 df_co2 = pd.read_csv("data/merged_project_worldbank.csv.zip")
 
-# Load plots tab class managers
+# Load page managers
+carbon_market_data_table_page = DataTablePage(df)
+co2_data_table_page = DataTablePage(df_co2)
 box_plot_analysis = BoxPlotAnalysis(df)
 co2_emitted_by_country = Co2EmittedByCountry(df_co2)
+pair_plot_analysis = PairPlotAnalysis(df_co2)
 about_us_page = AboutUsPage(app)
 
 
@@ -55,9 +61,12 @@ app.layout = dbc.Container(
         dbc.CardBody(
             dbc.Tabs([
                 dbc.Tab(label='Carbon Market', children=DescriptionPage.get_html_components()),
+                dbc.Tab(label='Data carbon-market', children=carbon_market_data_table_page.get_html_components()),
+                dbc.Tab(label='Data CO2', children=co2_data_table_page.get_html_components()),
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
-                dbc.Tab(label='Other 2'),
+                dbc.Tab(label='Pair Plot Analysis', children=pair_plot_analysis.get_html_components()),
+                dbc.Tab(label='Report', children=ReportPage.get_html_components()),
                 dbc.Tab(label='About Us', children=about_us_page.get_html_components())
             ])),
         dbc.CardFooter("Data Science For All DS4A - Colombia 2022", style={
