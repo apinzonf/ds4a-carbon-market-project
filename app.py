@@ -61,8 +61,16 @@ app.layout = dbc.Container(
         dbc.CardBody(
             dbc.Tabs([
                 dbc.Tab(label='Carbon Market', children=DescriptionPage.get_html_components()),
-                dbc.Tab(label='Data carbon-market', children=carbon_market_data_table_page.get_html_components()),
-                dbc.Tab(label='Data CO2', children=co2_data_table_page.get_html_components()),
+                dbc.Tab(label='Data carbon-market', children=carbon_market_data_table_page.get_html_components(),
+                        style={
+                       'margin-top' : '2%',                                   
+                       'height': '80vh',                    
+                       'overflow': 'scroll'
+                       }),
+                dbc.Tab(label='Data CO2', children=co2_data_table_page.get_html_components(),
+                       style = {
+                       'margin-top' : '2%'
+                       }),
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
                 dbc.Tab(label='Pair Plot Analysis', children=pair_plot_analysis.get_html_components()),
