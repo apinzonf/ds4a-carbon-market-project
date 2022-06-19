@@ -52,3 +52,10 @@ def task_coverage():
     yield cov.all()
     yield cov.src()
     yield cov.by_module()
+
+
+def task_create_docker_image():
+    return {
+        'actions': ['docker build --tag ds4a-carbon-market-project .'],
+        'task_dep':['unit_tests']
+    }
