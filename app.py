@@ -15,6 +15,7 @@ app = Dash(__name__,
            meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}],
            external_stylesheets=[dbc.themes.CERULEAN])
 app.title = 'Carbon-Market analysis'
+app._favicon = ("carbon_market.ico")
 
 # Load data frames
 df = pd.read_csv("data/carbon-market.csv.zip")
