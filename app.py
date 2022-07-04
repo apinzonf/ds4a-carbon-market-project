@@ -15,6 +15,7 @@ app = Dash(__name__,
            meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}],
            external_stylesheets=[dbc.themes.CERULEAN])
 app.title = 'Carbon-Market analysis'
+app._favicon = ("carbon_market.ico")
 
 # Load data frames
 df = pd.read_csv("data/carbon-market.csv.zip")
@@ -52,25 +53,40 @@ def get_tab_style():
 app.layout = dbc.Container(
     children=[
         dbc.CardHeader(children=[
-            html.H4(children='Carbon-Market analysis', className="card-title"),
-            html.P(children='Team 74', className="card-text")
-        ], style={
-            'flex': '1',
-            'max-height': '80px',
-            'min-height': '80px'}),
+            dbc.Row([
+                dbc.Col([
+                    html.H4(children='Carbon-Market analysis', className="card-title"),
+                    html.P(children='Team 74', className="card-text")
+                ]),
+                dbc.Col(
+                    dbc.CardImg(
+                        src=app.get_asset_url("header_background.png"),
+                        style={
+                            "opacity": 0.9,
+                            'max-height': '100px',
+                            'min-height': '100px',
+                            'max-width': '278px',
+                            'min-width': '278px'
+                        },
+                    ),
+                    style={
+                        'text-align': 'right'
+                    })
+            ])
+        ]),
         dbc.CardBody(
             dbc.Tabs([
                 dbc.Tab(label='Carbon Market', children=DescriptionPage.get_html_components()),
                 dbc.Tab(label='Data carbon-market', children=carbon_market_data_table_page.get_html_components(),
                         style={
-                       'margin-top' : '2%',                                   
-                       'height': '80vh',                    
-                       'overflow': 'scroll'
-                       }),
+                            'margin-top': '2%',
+                            'height': '80vh',
+                            'overflow': 'scroll'
+                        }),
                 dbc.Tab(label='Data CO2', children=co2_data_table_page.get_html_components(),
-                       style = {
-                       'margin-top' : '2%'
-                       }),
+                        style={
+                            'margin-top': '2%'
+                        }),
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
                 dbc.Tab(label='Pair Plot Analysis', children=pair_plot_analysis.get_html_components()),
@@ -89,7 +105,7 @@ app.layout = dbc.Container(
         'height': '100vh',
         'min-height': '100vh'
     }
-    )
+)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port="8050")
