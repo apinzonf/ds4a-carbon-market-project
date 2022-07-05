@@ -8,7 +8,7 @@ from app.data_table_page import DataTablePage
 from app.description_page import DescriptionPage
 from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.boxplot_analysis import BoxPlotAnalysis
-from app.pairplot_analysis import PairPlotAnalysis
+from app.pairplot_analysis import FastViewCarbonMarket
 from app.report_page import ReportPage
 
 app = Dash(__name__,
@@ -26,7 +26,7 @@ carbon_market_data_table_page = DataTablePage(df)
 co2_data_table_page = DataTablePage(df_co2)
 box_plot_analysis = BoxPlotAnalysis(df)
 co2_emitted_by_country = Co2EmittedByCountry(df_co2)
-pair_plot_analysis = PairPlotAnalysis(df_co2)
+animations = FastViewCarbonMarket(df)
 about_us_page = AboutUsPage(app)
 
 
@@ -38,6 +38,11 @@ def update_line_chart(countries=co2_emitted_by_country.country_list):
 @app.callback(box_plot_analysis.get_output(), box_plot_analysis.get_inputs())
 def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issued', semilogy=["SemiLogY"]):
     return box_plot_analysis.boxplot_fig(x_value, y_value, semilogy)
+
+
+@app.callback(animations.get_output(), animations.get_inputs())
+def simulation_interaction(countries=animations.country_list, type_analysis='scope', credit='credits_issued'):
+    return animations.graphics(countries, type_analysis, credit)
 
 
 def get_tab_style():
@@ -89,7 +94,7 @@ app.layout = dbc.Container(
                         }),
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
-                dbc.Tab(label='Pair Plot Analysis', children=pair_plot_analysis.get_html_components()),
+                dbc.Tab(label='Fast View of Carbon-Market', children=animations.get_html_components()),
                 dbc.Tab(label='Report', children=ReportPage.get_html_components()),
                 dbc.Tab(label='About Us', children=about_us_page.get_html_components())
             ])),
