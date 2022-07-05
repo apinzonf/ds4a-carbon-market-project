@@ -2,13 +2,14 @@ from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
+import pycountry
 
 from app.about_us_page import AboutUsPage
 from app.data_table_page import DataTablePage
 from app.description_page import DescriptionPage
 from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.boxplot_analysis import BoxPlotAnalysis
-from app.pairplot_analysis import PairPlotAnalysis
+from app.pairplot_analysis import animations
 from app.report_page import ReportPage
 
 app = Dash(__name__,
@@ -38,6 +39,10 @@ def update_line_chart(countries=co2_emitted_by_country.country_list):
 @app.callback(box_plot_analysis.get_output(), box_plot_analysis.get_inputs())
 def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issued', semilogy=["SemiLogY"]):
     return box_plot_analysis.boxplot_fig(x_value, y_value, semilogy)
+
+@app.callback(animations.get_output(), animations.get_inputs())
+def simulation_interaction( countries  = animations.country_list, type_analysis = 'scope', credit = 'credits_issued'):    
+    return animations.graphics( countries, type_analysis, credit )
 
 
 def get_tab_style():
