@@ -5,6 +5,7 @@ import pandas as pd
 
 from app.about_us_page import AboutUsPage
 from app.data_table_page import DataTablePage
+from app.about_models import DescriptionModels
 from app.description_page import DescriptionPage
 from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.boxplot_analysis import BoxPlotAnalysis
@@ -95,6 +96,7 @@ app.layout = dbc.Container(
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
                 dbc.Tab(label='Fast View of Carbon-Market', children=animations.get_html_components()),
+                dbc.Tab(label='About the models', children=DescriptionModels.get_html_components()),
                 dbc.Tab(label='Report', children=ReportPage.get_html_components()),
                 dbc.Tab(label='About Us', children=about_us_page.get_html_components())
             ])),
