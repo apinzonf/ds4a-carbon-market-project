@@ -126,7 +126,7 @@ class AboutUsPage(object):
                 dbc.Col(
                     self.describe_person(
                         name='Team 74',
-                        profile_photo='',
+                        profile_photo='profile_photos/team74.png',
                         text_link='Team 74',
                         url_link='',
                         description = """

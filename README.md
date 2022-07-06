@@ -5,15 +5,15 @@ Carbon-Market analysis project
 
 ## Runtime settings
 
-Property | Value
--------- | -----
-Runtime | Python 3.7
+| Property | Value      |
+|----------|------------|
+| Runtime  | Python 3.7 |
 
 ### Environment variables
 
-Key | Value
---- | -----
-VERSION | 1.0.0
+| Key     | Value |
+|---------|-------|
+| VERSION | 1.0.0 |
 
 ## software Requirements
 - python >= 3.7
@@ -21,6 +21,7 @@ VERSION | 1.0.0
 
 ### Build dependencies
 - doit (Python automation tool https://pydoit.org/)
+- docker (optional, to create the docker image) 
 
 ### Project dependencies
 - dash
@@ -61,6 +62,16 @@ doit list
 ## Run the dash app
 ```bash
 cd ds4a-carbon-market-project/
-cd app/
 python app.py
+```
+
+## Create the docker image
+```bash
+cd ds4a-carbon-market-project/
+doit create_docker_image 
+```
+
+## Run using docker 
+```bash
+docker run --rm -p 8050:8050 ds4a-carbon-market-project 
 ```

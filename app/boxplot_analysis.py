@@ -41,45 +41,64 @@ class BoxPlotAnalysis(object):
         return box_y_cols
 
     def get_html_components(self):
-        return html.Div(
-            children=[
-                dbc.Nav(children=[
-                    html.Div(children=[
-                        dbc.FormText("Select category for x axis"),
-                        dcc.Dropdown(
-                            options=BoxPlotAnalysis.get_box_x_cols(),
-                            value=BoxPlotAnalysis.get_box_x_cols()[0],
-                            id='id-box-drop-down-x')],
-                        className="mb-4"
-                    ),
-                    html.Div(children=[
-                        dbc.FormText("Select numerical data for y axis"),
-                        dcc.Dropdown(
-                            options=BoxPlotAnalysis.get_box_y_cols(),
-                            value=BoxPlotAnalysis.get_box_y_cols()[0],
-                            id='id-box-drop-down-y')],
-                        className="mb-4"
-                    ),
-                    html.Div(children=[
-                        dbc.FormText("Plot log scaling on the y axis"),
-                        dcc.Checklist(
-                            options=["SemiLogY"],
-                            value=["SemiLogY"],
-                            id='id-box-drop-down-semilogy')],
-                        className="mb-4")
-                ], style={
-                    'min-width': '250px',
-                    'padding': '1rem 2rem 1rem 1rem'
-                },
-                    vertical="md"),
-                html.Article(dcc.Graph(id='box-graph', figure=self.boxplot_fig()),
-                             style={'height': '100%', 'flex': '70%'}
-                             )
-            ],
-            style={
-                'display': 'flex',
-                'flex-direction': 'row',
-                'flex': '70%',
-                'margin': '10px'
-            })
+        return dbc.CardBody([
+            html.H4("Analyzing Carbon Market Data", className="card-title", 
+                    style = {}),
+            html.Div(
+                children=[
+                html.Article(
+                    children=[
+                    html.Section(children=[
+                        html.Br(),
+                        html.H5("Interactive graph", className="card-title"),
+                        html.P( """In this section you can interactive with the diferent variables, only select the categories for the axis x and the numerical variables in the second input of the form""", 
+                               className="card-text", style={'white-space': 'pre-wrap',
+                                                             'padding':'10px',
+                                                             "background-color": "#fafafa" }
+                              )
+                        ])
+                ])
+            ]), 
+            html.Div(
+                    children=[
+                        dbc.Nav(children=[
+                            html.Div(children=[
+                                dbc.FormText("Select category for x axis"),
+                                dcc.Dropdown(
+                                    options=BoxPlotAnalysis.get_box_x_cols(),
+                                    value=BoxPlotAnalysis.get_box_x_cols()[0],
+                                    id='id-box-drop-down-x')],
+                                className="mb-4"
+                            ),
+                            html.Div(children=[
+                                dbc.FormText("Select numerical data for y axis"),
+                                dcc.Dropdown(
+                                    options=BoxPlotAnalysis.get_box_y_cols(),
+                                    value=BoxPlotAnalysis.get_box_y_cols()[0],
+                                    id='id-box-drop-down-y')],
+                                className="mb-4"
+                            ),
+                            html.Div(children=[
+                                dbc.FormText("Plot log scaling on the y axis"),
+                                dcc.Checklist(
+                                    options=["SemiLogY"],
+                                    value=["SemiLogY"],
+                                    id='id-box-drop-down-semilogy')],
+                                className="mb-4")
+                        ], style={
+                            'min-width': '250px',
+                            'padding': '1rem 2rem 1rem 1rem'
+                        },
+                            vertical="md"),
+                        html.Article(dcc.Graph(id='box-graph', figure=self.boxplot_fig()),
+                                     style={'height': '100%', 'flex': '70%'}
+                                     )
+                    ],
+                    style={
+                        'display': 'flex',
+                        'flex-direction': 'row',
+                        'flex': '70%',
+                        'margin': '10px'
+                    })
+        ])
         return
