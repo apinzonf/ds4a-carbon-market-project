@@ -214,14 +214,9 @@ class FastViewCarbonMarket(object):
         analysis = ['voluntary_status', 'scope', 'type', 'reduction_removal', 'methodology_protocol', 'project_type']
         analysis.sort()
         return analysis
-    
-    
-    def graphics_CO2(self):
-        
-        data = self.df_co2.copy()
-        #self.df_co2 = df_co2_2        
 
-        
+    def graphics_CO2(self):
+        data = self.df_co2.copy()
         fig_geo_co2 = px.choropleth(data, locations='code',
                                  animation_frame='year',
                                  color='CO2',
