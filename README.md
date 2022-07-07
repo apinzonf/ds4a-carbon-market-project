@@ -24,11 +24,23 @@ Carbon-Market analysis project
 - docker (optional, to create the docker image) 
 
 ### Project dependencies
+#### Project dependencies
 - dash
 - plotly
 - pandas
 - dash_bootstrap_components
-- Flask==2.1.1
+- Flask==2.1.2
+- pycountry
+- waitress
+#### Test dependencies
+- pytest==7.1.2
+#### Build dependencies
+- doit==0.34.2
+- doit-py>=0.4.0
+- mock
+#### Coverage
+- coverage==6.4.1
+
 
 ### Test and coverage dependencies
 - pytest
@@ -75,3 +87,9 @@ doit create_docker_image
 ```bash
 docker run --rm -p 8050:8050 ds4a-carbon-market-project 
 ```
+
+## Push docker image to Azure repository
+```bash
+doit push_docker_image --registry apinzonf.azurecr.io
+```
+apinzonf.azurecr.io is a private repository only used here as an example
