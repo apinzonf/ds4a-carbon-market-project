@@ -11,6 +11,7 @@ from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.boxplot_analysis import BoxPlotAnalysis
 from app.pairplot_analysis import FastViewCarbonMarket
 from app.report_page import ReportPage
+from app.models_plot import Projections
 
 app = Dash(__name__,
            meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}],
@@ -21,6 +22,8 @@ app._favicon = ("carbon_market.ico")
 # Load data frames
 df = pd.read_csv("data/carbon-market.csv.zip")
 df_co2 = pd.read_csv("data/merged_project_worldbank.csv.zip")
+global_projections = pd.read_csv("data/prediction_df_global.csv")
+colombia_projections = pd.read_csv("data/prediction_df_colombia.csv")
 
 # Load page managers
 carbon_market_data_table_page = DataTablePage(df)
@@ -96,6 +99,7 @@ app.layout = dbc.Container(
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
                 dbc.Tab(label='Fast View of Carbon-Market', children=animations.get_html_components()),
+                dbc.Tab(label='Projections', children=Projections.get_html_components()),
                 dbc.Tab(label='About the models', children=DescriptionModels.get_html_components()),
                 dbc.Tab(label='Report', children=ReportPage.get_html_components()),
                 dbc.Tab(label='About Us', children=about_us_page.get_html_components())
