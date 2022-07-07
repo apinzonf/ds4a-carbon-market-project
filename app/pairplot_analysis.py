@@ -1,23 +1,41 @@
+import pandas as pd
+import numpy as np
+import dash
+
 import plotly.express as px
+import matplotlib as plt
+import matplotlib.colors as mc            
+import matplotlib.pyplot as plt           
+from matplotlib.cm import ScalarMappable  
+
 from dash import Output, Input, html, dcc
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 import plotly.io as pio
+
+from plotly.offline import init_notebook_mode, iplot
+
+import json
+import os
+
 
 pio.templates.default = "simple_white"
 import pycountry
 
 
 class FastViewCarbonMarket(object):
-    def __init__(self, df):
+    def __init__(self, df, df_co2_2):
         self.df = df
         self.country_list = df.country.unique()
-        self.scope_list = df.scope.unique()
-        self.region_list = df.region.unique()
+        self.scope_list = df.scope.unique()        
         self.project_list = df.project_type.unique()
-        self.reduction_list = df.reduction_removal.unique()
-
-    def graphics(self, country='Colombia', type_analysis='scope', credit='credits_issued'):
+        self.reduction_list = df.reduction_removal.unique()        
+        self.df_co2 = df_co2_2        
+        self.country_co2 = df_co2_2.name.unique()
+        
+        
+        
+    def graphics_CM(self, country='Colombia', type_analysis='scope', credit='credits_issued'):
 
         def get_code(loc):
             try:
@@ -177,6 +195,8 @@ class FastViewCarbonMarket(object):
             range_y=[0, 10000000],
             title='behavior of scope by type of projects')
         simulation.update_layout(showlegend=False)
+        
+        
 
         return fig_countries, fig_geo, fig_pie, fig_bar, simulation, credit_by_selection, projects_by_selection
 
@@ -208,27 +228,189 @@ class FastViewCarbonMarket(object):
         analysis = ['voluntary_status', 'scope', 'type', 'reduction_removal', 'methodology_protocol', 'project_type']
         analysis.sort()
         return analysis
+    
+    
+    def graphics_CO2(self):
+        
+        data = self.df_co2.copy()
+        #self.df_co2 = df_co2_2        
+
+        
+        fig_geo_co2 = px.choropleth(data, locations='code',
+                                 animation_frame='year',
+                                 color='CO2',
+                                 hover_name='name',
+                                 color_continuous_scale='temps_r'
+                                 )
+        fig_geo_co2.update_layout(height=350, )
+        
+        Un_Kt = 1000
+
+        co2_country = data.groupby("name")['CO2'].sum()
+        co2_country_acum = sum(co2_country)
+        co2_country_df = pd.DataFrame(co2_country).reset_index()
+        co2_country_df['% Representation'] = (co2_country_df['CO2'] / co2_country_acum) * 100
+        co2_country_df['CO2'] = co2_country_df['CO2'] / Un_Kt
+        co2_country_df = co2_country_df.sort_values(by ='% Representation', ascending = False)
+        
+        co2_country_df['acumulado'] = co2_country_df['% Representation'].cumsum()
+        co2_country_df = co2_country_df.reset_index()
+        
+        
+        ten_top = co2_country_df.iloc[10,4]
+        ten_top = str(f'{ten_top:.2f}' + '%')
+                
+        top_countries = list(co2_country_df['name'].head(8))        
+        g20_df = data[data['name'].isin(top_countries) ]
+
+        fig_countries_co2 = px.area(g20_df.sort_values(by='CO2',ascending=False), 
+                x="year",
+                y="CO2",
+                color="name", 
+                line_group="name")
+        fig_countries_co2.update_layout(height=350, )
+
+        
+        fig_pie_co2 = px.pie(co2_country_df.head(10).sort_values(by ='CO2', ascending = False), 
+                     values='% Representation', names='name',
+                     hover_data=['name'], labels={'% Representation':'%'})
+        fig_pie_co2.update_traces(textposition='inside', textinfo='label+value')
+        
+        fig_scatter = px.scatter(
+                                data, x= 'GDP' , y = 'CO2',
+                                animation_frame = 'year',
+                                animation_group = 'CO2',
+                                size = 'pop',
+                                color= 'code_region',
+                                hover_name = 'name',
+                                log_x = True,
+                                range_x=[100,100000],
+                                range_y=[100,12000000]
+                            )
+        
+        case_ukraine = px.area(data[data['name'] == 'Ukraine'], 
+                                x="year",
+                                y="CO2",
+                                color="name", 
+                                line_group="name")
+        
+        return  fig_geo_co2, fig_countries_co2, ten_top, fig_pie_co2, fig_scatter, case_ukraine                   
+    
+    
+
 
     def get_html_components(self):
-        return dbc.CardBody([
+        return dbc.CardBody([ 
+     
+     dbc.Row(
+         dbc.Col(html.Div("Fast view of databases"),
+                 width={"size": 6, "offset": 4},
+                 className='h4',
+                 style={'justify': 'center'}         
+                 )
+         ),
 
-            dbc.Row(
-                dbc.Col(
-                    html.Div("Fast view of carbon market"),
-                    width={"size": 6, "offset": 4},
-                    className='h4',
-                    style={'justify': 'center'}
+            
+     dbc.Tabs(
+        [
 
-                )
-            ),
+############  Tab CO2        
+            
+            dbc.Tab(    
+            dbc.CardBody([              
+               
+               dbc.Row([
+                    dbc.Col([html.Label("Overall view", className="align-middle")])
+                ], style={"background-color": "#EEFFD6",
+                          'height': '35px',
+                          'border-radius': '5px',
+                          'padding': '5px 0px',
+                          'text-align': 'left',
+                          }
+                ),
+                dbc.Row([
+                    dbc.Col([
+                        dcc.Graph(id='geo-chart-co2', figure=self.graphics_CO2()[0])
+                    ], width=6),
+
+                    dbc.Col([
+                        dcc.Graph(id='country-co2', figure=self.graphics_CO2()[1] )
+                    ], width=6),
+                ]),
+                dbc.Row([
+                    dbc.Col(
+                        html.Div('Comparative with other economics indicators'),
+                    )],
+                    style={"background-color": "#EEFFD6",
+                           'height': '35px',
+                           'border-radius': '5px',
+                           'padding': '5px 0px',
+                           'text-align': 'left',
+                           }
+                ),
+                dbc.Row([
+                    dbc.Col([
+                         html.Label('% Emitions top ten', className='card-tittle'),
+                         html.H4(self.graphics_CO2()[2])                         
+                         ],
+                            style={
+                                'border-radius': '5px',
+                                'margin-top': '30px',
+                                'padding': '30px 0 0 30px'
+                           },
+                            width=2),
+                    
+                    dbc.Col([
+                         dcc.Graph(id='pie-co2', config={'displayModeBar': False}, figure=self.graphics_CO2()[3])
+                            ], width=4),
+                    
+                    dbc.Col([
+                        dcc.Graph(id='scatter-co2', config={'displayModeBar': False}, figure=self.graphics_CO2()[4])
+                            ], width=6),
+                    ]),
+                
+                dbc.Row([
+                    dbc.Col(
+                        html.Div('Case Ukraine'),
+                    )],
+                    style={"background-color": "#EEFFD6",
+                           'height': '35px',
+                           'border-radius': '5px',
+                           'padding': '5px 0px',
+                           'text-align': 'left',
+                           }
+                ),
+                
+                dbc.Row([
+                   
+                    dbc.Col([
+                         dcc.Graph(id='id_ukraine', config={'displayModeBar': False}, figure=self.graphics_CO2()[5])
+                            ], width=12),
+                    ]),
+
+            ]), label = 'CO2 emitted'),
+            
+########## Tab Market carbon                     
+         dbc.Tab(
+            dbc.CardBody([
 
             dbc.Row([
+                    dbc.Col([html.Label("Overall view", className="align-middle")])
+                ], style={"background-color": "#EEFFD6",
+                          'height': '35px',
+                          'border-radius': '5px',
+                          'padding': '5px 0px',
+                          'text-align': 'left',
+                          }
+                ),
+                
+            dbc.Row([
                 dbc.Col([
-                    dcc.Graph(id='geo-chart', config={}, figure=self.graphics()[1])
+                    dcc.Graph(id='geo-chart', config={}, figure=self.graphics_CM()[1])
                 ], width=6),
 
                 dbc.Col([
-                    dcc.Graph(id='country-chart', config={}, figure=self.graphics()[0])
+                    dcc.Graph(id='country-chart', config={}, figure=self.graphics_CM()[0])
                 ], width=6),
             ]),
 
@@ -282,7 +464,7 @@ class FastViewCarbonMarket(object):
                     },
                     width=3),
                 dbc.Col([
-                    dcc.Graph(id='bar-chart', config={'displayModeBar': False}, figure=self.graphics()[3])
+                    dcc.Graph(id='bar-chart', config={'displayModeBar': False}, figure=self.graphics_CM()[3])
                 ], width=6),
             ]),
 
@@ -298,12 +480,16 @@ class FastViewCarbonMarket(object):
 
             dbc.Row([
                 dbc.Col([
-                    dcc.Graph(id='pie-chart', config={'displayModeBar': False}, figure=self.graphics()[2])
+                    dcc.Graph(id='pie-chart', config={'displayModeBar': False}, figure=self.graphics_CM()[2])
                 ], width=5),
                 dbc.Col([
-                    dcc.Graph(id='simulation', config={'displayModeBar': False}, figure=self.graphics()[4])
+                    dcc.Graph(id='simulation', config={'displayModeBar': False}, figure=self.graphics_CM()[4])
                 ], width=7)
             ])
         ])
-
-        return
+             
+            ,label='Carbon Market'),
+            
+        ]
+     )
+     ])
