@@ -35,18 +35,18 @@ class Projections(object):
                     html.Div([
                         html.H3('Column 1'),
                         dcc.Graph(
-                            id='line-plot',
+                            id='line-plot-global',
                             figure=self.line_plot_fig_global(),
-                            style={'height': '100%', 'flex': '70%'}
+                            style={'height': '600px', 'flex': '70%'}
                         )
                     ], className="six columns"),
 
                     html.Div([
                         html.H3('Column 2'),
                         dcc.Graph(
-                            id='line-plot',
+                            id='line-plot-col',
                             figure=self.line_plot_fig_col(),
-                            style={'height': '100%', 'flex': '70%'}
+                            style={'height': '600px', 'flex': '70%'}
                         )
                     ], className="six columns"),
                 ], className="row")

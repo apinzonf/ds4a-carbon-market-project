@@ -1,14 +1,12 @@
-from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
-import plotly.express as px
 import pandas as pd
+from dash import Dash, html
 
 from app.about_us_page import AboutUsPage
-from app.data_table_page import DataTablePage
-from app.about_models import DescriptionModels
-from app.description_page import DescriptionPage
-from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.boxplot_analysis import BoxPlotAnalysis
+from app.co2_emitted_by_country import Co2EmittedByCountry
+from app.data_table_page import DataTablePage
+from app.description_page import DescriptionPage
 from app.pairplot_analysis import FastViewCarbonMarket
 from app.report_page import ReportPage
 from app.models_plot import Projections
@@ -22,16 +20,19 @@ app._favicon = ("carbon_market.ico")
 # Load data frames
 df = pd.read_csv("data/carbon-market.csv.zip")
 df_co2 = pd.read_csv("data/merged_project_worldbank.csv.zip")
+df_world_bank_co2 = pd.read_csv("data/world_bank.csv.zip")
 global_projections = pd.read_csv("data/prediction_df_global.csv")
 colombia_projections = pd.read_csv("data/prediction_df_colombia.csv")
+
 
 # Load page managers
 carbon_market_data_table_page = DataTablePage(df)
 co2_data_table_page = DataTablePage(df_co2)
 box_plot_analysis = BoxPlotAnalysis(df)
 co2_emitted_by_country = Co2EmittedByCountry(df_co2)
-animations = FastViewCarbonMarket(df)
+animations = FastViewCarbonMarket(df, df_world_bank_co2)
 about_us_page = AboutUsPage(app)
+projections = Projections(global_projections, colombia_projections)
 
 
 @app.callback(co2_emitted_by_country.get_output(), co2_emitted_by_country.get_input())
@@ -46,7 +47,7 @@ def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issu
 
 @app.callback(animations.get_output(), animations.get_inputs())
 def simulation_interaction(countries=animations.country_list, type_analysis='scope', credit='credits_issued'):
-    return animations.graphics(countries, type_analysis, credit)
+    return animations.graphics_CM(countries, type_analysis, credit)
 
 
 def get_tab_style():
@@ -99,8 +100,7 @@ app.layout = dbc.Container(
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
                 dbc.Tab(label='Fast View of Carbon-Market', children=animations.get_html_components()),
-                dbc.Tab(label='Projections', children=Projections.get_html_components()),
-                dbc.Tab(label='About the models', children=DescriptionModels.get_html_components()),
+                dbc.Tab(label='Model Projections', children=projections.get_html_components()),
                 dbc.Tab(label='Report', children=ReportPage.get_html_components()),
                 dbc.Tab(label='About Us', children=about_us_page.get_html_components())
             ])),
@@ -119,4 +119,5 @@ app.layout = dbc.Container(
 )
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="8050")
+    from waitress import serve
+    serve(app.server, host="0.0.0.0", port=8050)
