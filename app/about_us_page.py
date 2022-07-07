@@ -127,8 +127,8 @@ class AboutUsPage(object):
                     self.describe_person(
                         name='Team 74',
                         profile_photo='profile_photos/team74.png',
-                        text_link='Team 74',
-                        url_link='',
+                        text_link='carbon-market-analysis.azurewebsites.net',
+                        url_link='https://carbon-market-analysis.azurewebsites.net/',
                         description = """
                         DS4A Team 74. 
                         Colombia 2022."""
