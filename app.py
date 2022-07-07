@@ -5,9 +5,11 @@ from dash import Dash, html
 from app.about_us_page import AboutUsPage
 from app.boxplot_analysis import BoxPlotAnalysis
 from app.co2_emitted_by_country import Co2EmittedByCountry
+from app.about_models import DescriptionModels
 from app.data_table_page import DataTablePage
 from app.description_page import DescriptionPage
-from app.pairplot_analysis import FastViewCarbonMarket
+from app.fast_view_carbon_market import FastViewForCarbonMarket
+from app.fast_view_co2 import FastViewCo2
 from app.report_page import ReportPage
 from app.models_plot import Projections
 
@@ -15,7 +17,7 @@ app = Dash(__name__,
            meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}],
            external_stylesheets=[dbc.themes.CERULEAN])
 app.title = 'Carbon-Market analysis'
-app._favicon = ("carbon_market.ico")
+app._favicon = "carbon_market.ico"
 
 # Load data frames
 df = pd.read_csv("data/carbon-market.csv.zip")
@@ -30,9 +32,10 @@ carbon_market_data_table_page = DataTablePage(df)
 co2_data_table_page = DataTablePage(df_co2)
 box_plot_analysis = BoxPlotAnalysis(df)
 co2_emitted_by_country = Co2EmittedByCountry(df_co2)
-animations = FastViewCarbonMarket(df, df_world_bank_co2)
 about_us_page = AboutUsPage(app)
 projections = Projections(global_projections, colombia_projections)
+fast_view_co2 = FastViewCo2(df_world_bank_co2)
+fast_view_carbon_market = FastViewForCarbonMarket(df)
 
 
 @app.callback(co2_emitted_by_country.get_output(), co2_emitted_by_country.get_input())
@@ -45,9 +48,9 @@ def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issu
     return box_plot_analysis.boxplot_fig(x_value, y_value, semilogy)
 
 
-@app.callback(animations.get_output(), animations.get_inputs())
-def simulation_interaction(countries=animations.country_list, type_analysis='scope', credit='credits_issued'):
-    return animations.graphics_CM(countries, type_analysis, credit)
+@app.callback(fast_view_carbon_market.get_output(), fast_view_carbon_market.get_inputs())
+def callback_fast_view_carbon_market(countries=fast_view_carbon_market.country_list, type_analysis='scope', credit='credits_issued'):
+    return fast_view_carbon_market.callback(countries, type_analysis, credit)
 
 
 def get_tab_style():
@@ -99,8 +102,10 @@ app.layout = dbc.Container(
                         }),
                 dbc.Tab(label='Boxplot Analysis', children=box_plot_analysis.get_html_components()),
                 dbc.Tab(label='CO2_emitted', children=co2_emitted_by_country.get_html_components()),
-                dbc.Tab(label='Fast View of Carbon-Market', children=animations.get_html_components()),
+                dbc.Tab(label='Fast View of Carbon-Market', children=fast_view_carbon_market.get_html_components()),
+                dbc.Tab(label='Fast View of CO2', children=fast_view_co2.get_html_components()),
                 dbc.Tab(label='Model Projections', children=projections.get_html_components()),
+                dbc.Tab(label='About the models', children=DescriptionModels.get_html_components()),
                 dbc.Tab(label='Report', children=ReportPage.get_html_components()),
                 dbc.Tab(label='About Us', children=about_us_page.get_html_components())
             ])),
