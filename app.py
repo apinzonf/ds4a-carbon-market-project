@@ -1,16 +1,14 @@
-from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
-import plotly.express as px
 import pandas as pd
+from dash import Dash, html
 
 from app.about_us_page import AboutUsPage
+from app.boxplot_analysis import BoxPlotAnalysis
+from app.co2_emitted_by_country import Co2EmittedByCountry
 from app.data_table_page import DataTablePage
 from app.description_page import DescriptionPage
-from app.co2_emitted_by_country import Co2EmittedByCountry
-from app.boxplot_analysis import BoxPlotAnalysis
 from app.pairplot_analysis import FastViewCarbonMarket
 from app.report_page import ReportPage
-import pycountry
 
 app = Dash(__name__,
            meta_tags=[{'name': 'viewport', 'content': 'width=device-width, height=device-height, initial-scale=1.0'}],
@@ -46,9 +44,6 @@ def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issu
 @app.callback(animations.get_output(), animations.get_inputs())
 def simulation_interaction(countries=animations.country_list, type_analysis='scope', credit='credits_issued'):
     return animations.graphics_CM(countries, type_analysis, credit)
-
-def simulation_interaction_2():
-    return animations.graphics_CO2()
 
 
 def get_tab_style():
@@ -119,5 +114,4 @@ app.layout = dbc.Container(
 )
 
 if __name__ == '__main__':
-    #app.run(host="0.0.0.0", port="8050")
-    app.run_server(debug=True)
+    app.run(host="0.0.0.0", port="8050")
