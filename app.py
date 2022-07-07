@@ -21,13 +21,14 @@ app._favicon = ("carbon_market.ico")
 # Load data frames
 df = pd.read_csv("data/carbon-market.csv.zip")
 df_co2 = pd.read_csv("data/merged_project_worldbank.csv.zip")
+df_co2_2 = pd.read_csv("data/world_bank.csv.zip")
 
 # Load page managers
 carbon_market_data_table_page = DataTablePage(df)
 co2_data_table_page = DataTablePage(df_co2)
 box_plot_analysis = BoxPlotAnalysis(df)
 co2_emitted_by_country = Co2EmittedByCountry(df_co2)
-animations = FastViewCarbonMarket(df)
+animations = FastViewCarbonMarket(df, df_co2_2)
 about_us_page = AboutUsPage(app)
 
 
@@ -43,8 +44,10 @@ def box_plot_analysis_slider_interaction(x_value='region', y_value='credits_issu
 
 @app.callback(animations.get_output(), animations.get_inputs())
 def simulation_interaction(countries=animations.country_list, type_analysis='scope', credit='credits_issued'):
-    return animations.graphics(countries, type_analysis, credit)
+    return animations.graphics_CM(countries, type_analysis, credit)
 
+def simulation_interaction_2():
+    return animations.graphics_CO2()
 
 def get_tab_style():
     return {
