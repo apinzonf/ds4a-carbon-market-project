@@ -54,24 +54,29 @@ class AboutUsPage(object):
                     self.describe_person(
                         name='Mateo Orozco Jimenez',
                         profile_photo='profile_photos/mateo_orozco.jpg',
-                        text_link='www.linkedin.com/in/ivan-herney-hernandez-leon',
-                        url_link='https://www.linkedin.com/in/ivan-herney-hernandez-leon',
+                        text_link='https://www.linkedin.com/in/mateo-orozco-jimenez-3307b977/',
+                        url_link='https://www.linkedin.com/in/mateo-orozco-jimenez-3307b977/',
                         description = """
-                        Ingeniero Administrador y Especialista en Inteligencia Artificial. 
-                        Analista financiero en 2B e-Commerce."""
+                        Administrative engineer and specialist in artificial intelligence with 5 years of experience working in corporate finance, 
+                        capital markets, project evaluation and data analysis. Professional with technical skills in programming, 
+                        management of office automation tools and C1 certification in English. 
+                        Person with high capacity for problem solving, analytical and attention to detail."""
                     )
                 ),
             ]),
             dbc.Row([
                 dbc.Col(
                     self.describe_person(
-                        name='Ivan Herney',
+                        name='Iván Herney Hernández León',
                         profile_photo='profile_photos/ivan_herney.jpg',
                         text_link='www.linkedin.com/in/ivan-herney-hernandez-leon',
                         url_link='https://www.linkedin.com/in/ivan-herney-hernandez-leon',
                         description = """
-                        Ingeniero de Procesos y Operaciones. 
-                        Hi everyone, I’m Ivan Hernandez, I am so happy to start this experience."""
+                        Production and operations engineer at Holcim, 
+                        Industrial engineer specialized in production and operations engineering with 14 years of experience in different industries
+                        including fertilizers, refractories, alternative fuels and cement, 
+                        passionate about data science and machine learning in which I permanent formation meeting
+                        """
                     )
                 ),
                 dbc.Col(
