@@ -33,7 +33,7 @@ class AboutUsPage(object):
                 )
             ],
             className="mb-3",
-            style={"maxHeight": "250px", "minHeight": "250px"}
+            style={"maxHeight": "290px", "minHeight": "290px"}
         )
 
     def get_html_components(self):
@@ -47,14 +47,14 @@ class AboutUsPage(object):
                         url_link='https://www.linkedin.com/in/alexander-pinzon-fernandez-9031138b/',
                         description = """
                         Master of Computer Science and Software Engineer. 
-                        Senior Software Engineer at Kinesso."""
+                        Senior Software Engineer at Microsoft."""
                     )
                 ),
                 dbc.Col(
                     self.describe_person(
                         name='Mateo Orozco Jimenez',
                         profile_photo='profile_photos/mateo_orozco.jpg',
-                        text_link='https://www.linkedin.com/in/mateo-orozco-jimenez-3307b977/',
+                        text_link='www.linkedin.com/in/mateo-orozco-jimenez-3307b977',
                         url_link='https://www.linkedin.com/in/mateo-orozco-jimenez-3307b977/',
                         description = """
                         Administrative engineer and specialist in artificial intelligence with 5 years of experience working in corporate finance, 
